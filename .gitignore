@@ -11,8 +11,9 @@
 .Rproj.user/
 
 # knitr cache folders
-figure/
 DocumentName_cache/
+RBenchmarkings_files/
+*.html
 
 # =========================
 # Operating System Files

@@ -1,11 +1,6 @@
----
-title: "R Benchmarkings"
-author: "Francisco Charte Ojeda"
-date: "Friday, February 27, 2015"
-output:
-  html_document:
-    keep_md: yes
----
+# R Benchmarkings
+Francisco Charte Ojeda  
+Friday, February 27, 2015  
 
 This document compares the performance in doing a task by means of different approaches in R. For doing so, the `microbenchmark` package is used, measuring the time spent by each approach. The results are shown numerically and plotting them using `ggplot2`.
 
@@ -16,14 +11,10 @@ Generating a data.frame containing character data with and without stringAsFacto
 
 With this code I want to test the difference between using `stringAsFactors = TRUE` versus `stringAsFactors = FALSE` while creating a new data.frame.
 
-```{r init, include=FALSE, echo = FALSE}
-library(knitr)
-opts_chunk$set(
-concordance=TRUE, cache = TRUE, cache.path = 'DocumentName_cache/', fig.path='figure/'
-)
-```
 
-```{r testStringAsFactors}
+
+
+```r
 library(microbenchmark)
 library(ggplot2)
 
@@ -40,11 +31,18 @@ result <- microbenchmark(
 )
 ```
 
-```{r echo = FALSE}
-levels(result$expr) <- c('stringsAsFactors=T', 'stringsAsFactors=F')
-result
-autoplot(result)
+
 ```
+## Unit: microseconds
+##                expr       min        lq      mean     median        uq
+##  stringsAsFactors=T 63663.300 68011.793 79166.269 70793.0625 98871.511
+##  stringsAsFactors=F   202.341   216.087   252.626   256.7755   277.303
+##         max neval
+##  173628.180   100
+##     330.271   100
+```
+
+![](figure/unnamed-chunk-1-1.png) 
 
 Conclusion
 ----------------
