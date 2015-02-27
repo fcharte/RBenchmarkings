@@ -86,3 +86,54 @@ The result should be the same while working with a vector or a data.frame, inste
 
 $ vs [[ operator
 ==============
+The `$` operator is constantly used in R code to access lists and data.frames elements by name. The operator `[` could be used to do the same task, using numeric indexes instead. Is there any performance difference between them?
+
+
+
+```r
+aList <- list( a = 5, b = 'list', c = list(c1 = 25))
+
+result <- microbenchmark(
+  { c(aList$a, aList$b, aList$c$c1) }, 
+  { c(aList[[1]], aList[[2]], aList[[2]][[1]]) }
+)
+```
+
+
+```
+## Unit: microseconds
+##         expr   min    lq    mean median    uq    max neval
+##   $ operator 2.566 2.933 3.56717  3.300 3.300 20.528   100
+##  [[ operator 1.466 1.467 2.16325  1.833 1.834 22.727   100
+```
+
+![](figure/unnamed-chunk-3-1.png) 
+
+Conclusion
+------------
+Although the difference between the two operators is very tight, it should be taken into account if we use these operators inside a loop or any other repetitve structure. Multiply the small difference by the number of times the operator is used during the program execution to assess if the effort worth it. 
+
+
+
+```r
+v <- runif(numElements, 1, 10)
+t <- runif(numElements, 1, 10)
+
+result <- microbenchmark(
+  { v > t }, 
+  { mapply(function(a,b) a > b, v, t) }
+)
+```
+
+
+```
+## Unit: microseconds
+##    expr       min        lq        mean    median         uq       max
+##   v > t    31.158    32.258    39.82723    38.306    41.2385    78.444
+##  mapply 16149.507 17874.535 20165.21624 19287.255 20826.4375 52952.435
+##  neval
+##    100
+##    100
+```
+
+![](figure/unnamed-chunk-4-1.png) 

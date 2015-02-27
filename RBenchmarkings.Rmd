@@ -78,3 +78,26 @@ The result should be the same while working with a vector or a data.frame, inste
 
 $ vs [[ operator
 ==============
+The `$` operator is constantly used in R code to access lists and data.frames elements by name. The operator `[` could be used to do the same task, using numeric indexes instead. Is there any performance difference between them?
+
+
+```{r testListAccess}
+aList <- list( a = 5, b = 'list', c = list(c1 = 25))
+
+result <- microbenchmark(
+  { c(aList$a, aList$b, aList$c$c1) }, 
+  { c(aList[[1]], aList[[2]], aList[[2]][[1]]) }
+)
+```
+
+```{r echo = FALSE, dependson="testListAccess"}
+levels(result$expr) <- c('$ operator', '[[ operator')
+result 
+autoplot(result)
+```
+
+Conclusion
+------------
+Although the difference between the two operators is very tight, it should be taken into account if we use these operators inside a loop or any other repetitve structure. Multiply the small difference by the number of times the operator is used during the program execution to assess if the effort worth it. 
+
+
