@@ -9,4 +9,4 @@ How to use
 =====
 Open the [`RBenchmarkings.md`](RBenchmarkings.md) file to see the tests and the results they produce.
 
-You can run these benchmarks in your own computer by downloading the [`RBenchmarkings.Rmd`](RBenchmarkings.Rmd) file and running in it. To do so, you will need R and knitr, ggplot2 and microbenchmark packages.
+You can run these benchmarks in your own computer by downloading the [`RBenchmarkings.Rmd`](RBenchmarkings.Rmd) file and running it. To do so, you will need R and the `knitr`, `ggplot2` and `microbenchmark` packages.
