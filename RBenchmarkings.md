@@ -114,26 +114,3 @@ Conclusion
 Although the difference between the two operators is very tight, it should be taken into account if we use these operators inside a loop or any other repetitve structure. Multiply the small difference by the number of times the operator is used during the program execution to assess if the effort worth it. 
 
 
-
-```r
-v <- runif(numElements, 1, 10)
-t <- runif(numElements, 1, 10)
-
-result <- microbenchmark(
-  { v > t }, 
-  { mapply(function(a,b) a > b, v, t) }
-)
-```
-
-
-```
-## Unit: microseconds
-##    expr       min        lq        mean    median         uq       max
-##   v > t    31.158    32.258    39.82723    38.306    41.2385    78.444
-##  mapply 16149.507 17874.535 20165.21624 19287.255 20826.4375 52952.435
-##  neval
-##    100
-##    100
-```
-
-![](figure/unnamed-chunk-4-1.png) 
