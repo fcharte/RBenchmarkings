@@ -9,12 +9,19 @@ This document compares the performance in doing a task by means of different app
 
 The goal is to elucidate which is the best method to accomplish a certain task.
 
-Generating a data.frame from existent data stored in vectors
------------
+Generating a data.frame containing character data with and without stringAsFactors
+=================
 
 With this code I want to test the difference between using `stringAsFactors = TRUE` versus `stringAsFactors = FALSE` while creating a new data.frame.
 
-```{r}
+```{r init, include=FALSE, echo = FALSE}
+library(knitr)
+opts_chunk$set(
+concordance=TRUE, cache = TRUE, cache.path = 'DocumentName_cache/', fig.path='figure/'
+)
+```
+
+```{r testStringAsFactors}
 library(microbenchmark)
 library(ggplot2)
 
@@ -34,3 +41,6 @@ result
 autoplot(result)
 ```
 
+Conclusion
+----------------
+Generating a `data.frame` containing character columns is quicker when `stringsAsFactors = FALSE` is used. Nonetheless, it may be taken into account that this option implies the use of more memory, as character strings are stored individually instead of numeric values referencing the factor levels.
