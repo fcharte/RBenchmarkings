@@ -10,6 +10,10 @@
 # RStudio files
 .Rproj.user/
 
+# knitr cache folders
+figure/
+DocumentName_cache/
+
 # =========================
 # Operating System Files
 # =========================

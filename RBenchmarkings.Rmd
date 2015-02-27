@@ -36,6 +36,9 @@ result <- microbenchmark(
     data.frame(aNumericVector, aStringVector, bStringVector, stringsAsFactors = TRUE),
     data.frame(aNumericVector, aStringVector, bStringVector, stringsAsFactors = FALSE)
 )
+```
+
+```{r echo = FALSE}
 levels(result$expr) <- c('stringsAsFactors=T', 'stringsAsFactors=F')
 result
 autoplot(result)
@@ -43,4 +46,4 @@ autoplot(result)
 
 Conclusion
 ----------------
-Generating a `data.frame` containing character columns is quicker when `stringsAsFactors = FALSE` is used. Nonetheless, it may be taken into account that this option implies the use of more memory, as character strings are stored individually instead of numeric values referencing the factor levels.
+Generating a `data.frame` containing character columns is quicker when `stringsAsFactors = FALSE` is used. Nonetheless, it may be taken into account that this option implies the use of more memory, as character strings are stored individually instead of as numeric values referencing the factor levels. For this same reason, further operations such as sorting by a character column can take more time (compared with sorting by a factor column).
