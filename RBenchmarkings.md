@@ -113,4 +113,75 @@ Conclusion
 ------------
 Although the difference between the two operators is very tight, it should be taken into account if we use these operators inside a loop or any other repetitve structure. Multiply the small difference by the number of times the operator is used during the program execution to assess if the effort worth it. 
 
+Comparison of two vector values
+======
 
+Assume that you want to know which items in a vector `v` (values) have higher values than the corresponding items (by position) in another vector `t` (threshold). The goal is setting to 0 those values. This is a task that can be accomplished in several ways, for instance:
+
+
+```r
+fgen <- function() runif(numElements, 1, 10)
+v <- fgen() 
+t <- fgen()
+
+result <- microbenchmark(
+  { for(i in 1:length(v)) if(v[i] > t[i]) v[i] <- 0 },
+  { v <- mapply(function(a,b) if(a > b) 0 else a, v, t) },
+  { v[which(v > t)] <- 0 },
+  { v[v > t] <- 0 },
+  { v <- ifelse(v > t, 0, v) }
+)
+```
+
+
+```
+## Unit: microseconds
+##    expr       min         lq       mean     median         uq       max
+##     for  5382.925  5904.7220  6666.7661  6543.4520  7280.7865 10064.621
+##  mapply 14723.958 18135.1590 20743.7826 19241.9855 21320.1935 55921.199
+##   which    37.389    41.2380    50.5235    49.8525    52.6020    94.940
+##   v > t   199.408   205.6405   216.6775   211.6890   219.7525   330.271
+##  ifelse  1397.692  1454.3250  1717.3311  1473.0200  1610.6625  7048.570
+##  neval
+##    100
+##    100
+##    100
+##    100
+##    100
+```
+
+![](figure/unnamed-chunk-4-1.png) 
+
+As can be seen, `mapply` produces the worst performance, followed by the `for` loop. The quickest way to do the work is almost the simplest one, using the `which` function. This function returns the indexes of elements affected, while  with the expression `v[v > t] <- 0` an array of the same length than `v` and `t` is obtained and all their elements are tested to see if they are `TRUE` or `FALSE` before the assignment.
+
+Simple functions can be vectorized by means of the `Vectorize` function in the base R package. Let us see how this approach performs against the best one of the previous tests:
+
+
+```r
+v <- fgen() 
+t <- fgen()
+f <- function(a, b) if(a > b) 0 else a
+vf <- Vectorize(f)
+
+result <- microbenchmark(
+  { v[which(v > t)] <- 0 },
+  { v <- vf(v, t) }
+)
+```
+
+
+```
+## Unit: microseconds
+##       expr       min       lq        mean    median         uq       max
+##      which    37.389    46.92    52.51384    50.219    56.4505   155.056
+##  Vectorize 15575.475 18293.51 21093.86502 20166.998 21997.0455 61137.339
+##  neval
+##    100
+##    100
+```
+
+![](figure/unnamed-chunk-5-1.png) 
+
+Conclusion
+--------------
+When it comes to apply some change to those items in a vector that satisfy a certain restriction, it seems that firstly obtaining the indexes, with the `which` function, and then making the change is the most efficient way of those compared here.
