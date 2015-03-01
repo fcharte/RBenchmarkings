@@ -15,9 +15,6 @@ With this code I want to test the difference between using `stringsAsFactors = T
 
 
 ```r
-library(microbenchmark)
-library(ggplot2)
-
 numElements <- 1e6
 someStrings <- sapply(1:25, function(x) paste(sample(c(letters, LETTERS), 10, replace = TRUE), collapse = ""))
 
@@ -33,13 +30,13 @@ result <- microbenchmark(
 
 
 ```
-## Unit: microseconds
-##                expr       min        lq      mean     median        uq
-##  stringsAsFactors=T 63663.300 68011.793 79166.269 70793.0625 98871.511
-##  stringsAsFactors=F   202.341   216.087   252.626   256.7755   277.303
-##         max neval
-##  173628.180   100
-##     330.271   100
+## Unit: relative
+##                expr     min       lq     mean  median       uq      max
+##  stringsAsFactors=T 320.012 307.7241 304.4763 255.215 364.2376 378.7762
+##  stringsAsFactors=F   1.000   1.0000   1.0000   1.000   1.0000   1.0000
+##  neval
+##    100
+##    100
 ```
 
 ![](figure/unnamed-chunk-1-1.png) 
@@ -65,15 +62,15 @@ result <- microbenchmark(
 
 
 ```
-## Unit: milliseconds
-##               expr        min         lq       mean     median         uq
-##         Empty list 224.685868 257.948932 257.710482 262.888320 265.938461
-##  Preallocated list   7.970467   8.197734   8.929039   8.370383   8.880268
-##             lapply   2.262405   2.343781   2.549256   2.426257   2.515148
-##         max neval
-##  310.987875   100
-##   44.134482   100
-##    3.761266   100
+## Unit: relative
+##               expr       min         lq       mean     median         uq
+##         Empty list 99.312841 110.056732 101.092425 108.351391 105.734737
+##  Preallocated list  3.523006   3.497653   3.502606   3.449916   3.530715
+##             lapply  1.000000   1.000000   1.000000   1.000000   1.000000
+##       max neval
+##  82.68170   100
+##  11.73394   100
+##   1.00000   100
 ```
 
 ![](figure/unnamed-chunk-2-1.png) 
@@ -101,10 +98,10 @@ result <- microbenchmark(
 
 
 ```
-## Unit: microseconds
-##         expr   min    lq    mean median    uq    max neval
-##   $ operator 2.566 2.933 3.56717  3.300 3.300 20.528   100
-##  [[ operator 1.466 1.467 2.16325  1.833 1.834 22.727   100
+## Unit: relative
+##         expr      min       lq     mean   median       uq       max neval
+##   $ operator 1.750341 1.999318 1.648986 1.800327 1.799346 0.9032428   100
+##  [[ operator 1.000000 1.000000 1.000000 1.000000 1.000000 1.0000000   100
 ```
 
 ![](figure/unnamed-chunk-3-1.png) 
@@ -135,13 +132,13 @@ result <- microbenchmark(
 
 
 ```
-## Unit: microseconds
-##    expr       min         lq       mean     median         uq       max
-##     for  5382.925  5904.7220  6666.7661  6543.4520  7280.7865 10064.621
-##  mapply 14723.958 18135.1590 20743.7826 19241.9855 21320.1935 55921.199
-##   which    37.389    41.2380    50.5235    49.8525    52.6020    94.940
-##   v > t   199.408   205.6405   216.6775   211.6890   219.7525   330.271
-##  ifelse  1397.692  1454.3250  1717.3311  1473.0200  1610.6625  7048.570
+## Unit: relative
+##    expr        min         lq       mean     median         uq        max
+##     for 143.970820 143.186430 131.953767 131.256246 138.412731 106.010333
+##  mapply 393.804541 439.768151 410.576911 385.978346 405.311462 589.016210
+##   which   1.000000   1.000000   1.000000   1.000000   1.000000   1.000000
+##   v > t   5.333333   4.986675   4.288649   4.246307   4.177645   3.478734
+##  ifelse  37.382439  35.266623  33.990739  29.547565  30.619796  74.242364
 ##  neval
 ##    100
 ##    100
@@ -171,13 +168,10 @@ result <- microbenchmark(
 
 
 ```
-## Unit: microseconds
-##       expr       min       lq        mean    median         uq       max
-##      which    37.389    46.92    52.51384    50.219    56.4505   155.056
-##  Vectorize 15575.475 18293.51 21093.86502 20166.998 21997.0455 61137.339
-##  neval
-##    100
-##    100
+## Unit: relative
+##       expr      min       lq    mean  median       uq     max neval
+##      which   1.0000   1.0000   1.000   1.000   1.0000   1.000   100
+##  Vectorize 416.5791 389.8873 401.682 401.581 389.6696 394.292   100
 ```
 
 ![](figure/unnamed-chunk-5-1.png) 
@@ -185,3 +179,25 @@ result <- microbenchmark(
 Conclusion
 --------------
 When it comes to apply some change to those items in a vector that satisfy a certain restriction, it seems that firstly obtaining the indexes, with the `which` function, and then making the change is the most efficient way of those compared here.
+
+R source code vs R compiled code
+======
+
+
+
+```r
+f <- function(v, t) for(i in 1:length(v)) if(v[i] > t[i]) v[i] <- 0
+fc <- cmpfun(f)
+
+result <- microbenchmark(f(v, t), fc(v, t))
+```
+
+
+```
+## Unit: relative
+##        expr      min       lq     mean   median       uq       max neval
+##    R source 4.190293 3.889237 2.765919 3.807727 3.641431 0.1785578   100
+##  R compiled 1.000000 1.000000 1.000000 1.000000 1.000000 1.0000000   100
+```
+
+![](figure/unnamed-chunk-6-1.png) 

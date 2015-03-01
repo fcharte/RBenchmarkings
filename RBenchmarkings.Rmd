@@ -7,7 +7,7 @@ output:
     keep_md: yes
 ---
 
-This document compares the performance in doing a task by means of different approaches in R. For doing so, the `microbenchmark` package is used, measuring the time spent by each approach. The results are shown numerically and plotting them using `ggplot2`.
+This document compares the performance in doing a task by means of different approaches in R. For doing so, the `microbenchmark` package is used, measuring the time spent by each approach. The results are shown numerically and plotting them using `ggplot2`. The numeric table shows relative performances, with the best method as `1.0` and the others showing the number of times which they are worse than the former.
 
 The goal is to elucidate which is the best method to accomplish a certain task.
 
@@ -18,15 +18,14 @@ With this code I want to test the difference between using `stringsAsFactors = T
 
 ```{r init, include=FALSE, echo = FALSE}
 library(knitr)
-opts_chunk$set(
-concordance=TRUE, cache = TRUE, cache.path = 'DocumentName_cache/', fig.path='figure/'
-)
+library(microbenchmark)
+library(ggplot2)
+library(compiler)
+
+opts_chunk$set(concordance=TRUE, cache = TRUE, cache.path = 'DocumentName_cache/', fig.path='figure/')
 ```
 
 ```{r testStringAsFactors}
-library(microbenchmark)
-library(ggplot2)
-
 numElements <- 1e6
 someStrings <- sapply(1:25, function(x) paste(sample(c(letters, LETTERS), 10, replace = TRUE), collapse = ""))
 
@@ -42,7 +41,7 @@ result <- microbenchmark(
 
 ```{r echo = FALSE}
 levels(result$expr) <- c('stringsAsFactors=T', 'stringsAsFactors=F')
-result
+print(result, unit="relative")
 autoplot(result)
 ```
 
@@ -66,7 +65,7 @@ result <- microbenchmark(
 
 ```{r echo = FALSE, dependson="testListGeneration"}
 levels(result$expr) <- c('Empty list', 'Preallocated list', 'lapply')
-result 
+print(result, unit="relative")
 autoplot(result)
 ```
 
@@ -92,7 +91,7 @@ result <- microbenchmark(
 
 ```{r echo = FALSE, dependson="testListAccess"}
 levels(result$expr) <- c('$ operator', '[[ operator')
-result 
+print(result, unit="relative")
 autoplot(result)
 ```
 
@@ -121,7 +120,7 @@ result <- microbenchmark(
 
 ```{r echo = FALSE, dependson="testCompareVectors"}
 levels(result$expr) <- c('for', 'mapply', 'which', 'v > t', 'ifelse')
-result 
+print(result, unit="relative")
 autoplot(result)
 ```
 
@@ -143,10 +142,11 @@ result <- microbenchmark(
 
 ```{r echo = FALSE, dependson="testVectorize"}
 levels(result$expr) <- c('which', 'Vectorize')
-result 
+print(result, unit="relative")
 autoplot(result)
 ```
 
 Conclusion
 --------------
 When it comes to apply some change to those items in a vector that satisfy a certain restriction, it seems that firstly obtaining the indexes, with the `which` function, and then making the change is the most efficient way of those compared here.
+
