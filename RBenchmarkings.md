@@ -2,7 +2,7 @@
 Francisco Charte Ojeda  
 Friday, February 27, 2015  
 
-This document compares the performance in doing a task by means of different approaches in R. For doing so, the `microbenchmark` package is used, measuring the time spent by each approach. The results are shown numerically and plotting them using `ggplot2`.
+This document compares the performance in doing a task by means of different approaches in R. For doing so, the `microbenchmark` package is used, measuring the time spent by each approach. The results are shown numerically and plotting them using `ggplot2`. The numeric table shows relative performances, with the best method as `1.0` and the others showing the number of times which they are worse than the former.
 
 The goal is to elucidate which is the best method to accomplish a certain task.
 
@@ -180,24 +180,3 @@ Conclusion
 --------------
 When it comes to apply some change to those items in a vector that satisfy a certain restriction, it seems that firstly obtaining the indexes, with the `which` function, and then making the change is the most efficient way of those compared here.
 
-R source code vs R compiled code
-======
-
-
-
-```r
-f <- function(v, t) for(i in 1:length(v)) if(v[i] > t[i]) v[i] <- 0
-fc <- cmpfun(f)
-
-result <- microbenchmark(f(v, t), fc(v, t))
-```
-
-
-```
-## Unit: relative
-##        expr      min       lq     mean   median       uq       max neval
-##    R source 4.190293 3.889237 2.765919 3.807727 3.641431 0.1785578   100
-##  R compiled 1.000000 1.000000 1.000000 1.000000 1.000000 1.0000000   100
-```
-
-![](figure/unnamed-chunk-6-1.png) 
