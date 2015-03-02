@@ -180,3 +180,73 @@ Conclusion
 --------------
 When it comes to apply some change to those items in a vector that satisfy a certain restriction, it seems that firstly obtaining the indexes, with the `which` function, and then making the change is the most efficient way of those compared here.
 
+R source code vs R compiled code vs C++ code
+======
+
+Sometimes it is not easy to translate a loop into a vectorized expression or a call to `apply`. For instance, this happens when the operation to be made in a cycle depens on the result of a previous iteration. In these cases the loop R function containing the loop can be translated to bytecode, by means of the `cmpfun` function of the `compiler` package. Another alternative would be implementing that loop in C++ taking advantage of the `Rcpp` package. But, is it worth it?
+
+Let us compare the performance of the same task implemented as a R function, as a compiled R function and as a C++ function:
+
+
+```r
+numElements <- 1e5
+v <- fgen() 
+t <- fgen()
+
+f <- function(v, t) for(i in 1:length(v)) if(v[i] > t[i]) v[i] <- 0
+fc <- cmpfun(f)
+cppFunction('
+    void fCpp(NumericVector v, NumericVector t) {
+      for(int i = 0; i < v.size(); i++)
+         v[i] = v[i] > t[i] ? 0 : v[i];
+    }
+')
+
+result <- microbenchmark(f(v, t), fc(v, t), fCpp(v, t))
+```
+
+
+```
+## Unit: relative
+##        expr       min        lq      mean    median        uq       max
+##    R source 148.50908 142.68063 145.23261 139.38388 139.51544 146.35978
+##  R compiled  39.12494  40.27761  41.52429  40.69591  41.57373  83.49558
+##        Rcpp   1.00000   1.00000   1.00000   1.00000   1.00000   1.00000
+##  neval
+##    100
+##    100
+##    100
+```
+
+![](figure/unnamed-chunk-6-1.png) 
+
+As can be seen the C++ function, embedded into R code with the `cppFunction`, is considerably quicker than the other two alternatives. Even compiling to bytecode, without the effort of installing the `Rcpp` package, can be worth it.
+
+Would be the C++ implementation of this task quicker than the `which` function based solution proposed in an earlier section? Let us see:
+
+
+```r
+v <- fgen() 
+t <- fgen()
+
+cppFunction('
+    void fCpp(NumericVector v, NumericVector t) {
+      for(int i = 0; i < v.size(); i++)
+         v[i] = v[i] > t[i] ? 0 : v[i];
+    }
+')
+
+result <- microbenchmark(v[which(v > t)] <- 0, fCpp(v, t))
+```
+
+
+```
+## Unit: relative
+##   expr      min       lq     mean   median       uq      max neval
+##  which 1.173733 1.206826 4.280313 1.632834 3.949873 85.94283   100
+##   Rcpp 1.000000 1.000000 1.000000 1.000000 1.000000  1.00000   100
+```
+
+![](figure/unnamed-chunk-7-1.png) 
+
+Although the improvement provided by the C++ function over `which` is not impressive, certainly we can save some time if we are comfortable writing C++ code.
