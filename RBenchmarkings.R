@@ -106,10 +106,17 @@ levels(result$expr) <- c('which', 'Rcpp')
 print(result, unit="relative")
 autoplot(result)
 
-# sum vs Reduce
+# Reduce vs vectorized functions
 numElements <- 1e5
 v <- fgen()
 result <- microbenchmark(sum(v), Reduce('+', v))
+
+print(result, unit="relative")
+autoplot(result)
+
+numElements <- 1e4
+aStringVector <- sample(someStrings, numElements, replace = TRUE)
+result <- microbenchmark(paste(aStringVector, collapse = " "), Reduce(paste, aStringVector))
 
 print(result, unit="relative")
 autoplot(result)
