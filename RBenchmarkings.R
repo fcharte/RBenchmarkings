@@ -105,3 +105,11 @@ result <- microbenchmark(v[which(v > t)] <- 0, fCpp(v, t))
 levels(result$expr) <- c('which', 'Rcpp')
 print(result, unit="relative")
 autoplot(result)
+
+# sum vs Reduce
+numElements <- 1e5
+v <- fgen()
+result <- microbenchmark(sum(v), Reduce('+', v))
+
+print(result, unit="relative")
+autoplot(result)
