@@ -114,6 +114,11 @@ result <- microbenchmark(sum(v), Reduce('+', v))
 print(result, unit="relative")
 autoplot(result)
 
+result <- microbenchmark(prod(v), Reduce('*', v))
+
+print(result, unit="relative")
+autoplot(result)
+
 numElements <- 1e4
 aStringVector <- sample(someStrings, numElements, replace = TRUE)
 result <- microbenchmark(paste(aStringVector, collapse = " "), Reduce(paste, aStringVector))
