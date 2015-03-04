@@ -239,7 +239,7 @@ result <- microbenchmark(paste(aStringVector, collapse = " "), Reduce(paste, aSt
 ```
 
 ```{r echo = FALSE, dependson="testReducePaste"}
-levels(result$expr) <- c('Reduce', 'paste')
+levels(result$expr) <- c('paste', 'Reduce')
 print(result, unit="relative")
 autoplot(result)
 ```

@@ -298,8 +298,8 @@ result <- microbenchmark(paste(aStringVector, collapse = " "), Reduce(paste, aSt
 ```
 ## Unit: relative
 ##    expr      min       lq     mean   median      uq      max neval
-##  Reduce    1.000    1.000    1.000    1.000    1.00    1.000   100
-##   paste 4037.178 4017.092 4155.169 4202.428 4369.06 3992.414   100
+##   paste    1.000    1.000    1.000    1.000    1.00    1.000   100
+##  Reduce 4037.178 4017.092 4155.169 4202.428 4369.06 3992.414   100
 ```
 
 ![](figure/unnamed-chunk-10-1.png) 
