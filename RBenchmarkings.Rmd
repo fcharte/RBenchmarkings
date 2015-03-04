@@ -207,3 +207,39 @@ autoplot(result)
 ```
 
 Although the improvement provided by the C++ function over `which` is not impressive, certainly we can save some time if we are comfortable writing C++ code.
+
+Reduce vs vectorized functions
+=====
+
+```{r testReduceSum}
+numElements <- 1e5
+v <- fgen()
+
+result <- microbenchmark(sum(v), Reduce('+', v))
+```
+
+```{r echo = FALSE, dependson="testReduceSum"}
+print(result, unit="relative")
+autoplot(result)
+```
+
+```{r testReduceProduct}
+result <- microbenchmark(prod(v), Reduce('*', v))
+```
+
+```{r echo = FALSE, dependson="testReduceProduct"}
+print(result, unit="relative")
+autoplot(result)
+```
+
+```{r testReducePaste}
+numElements <- 1e4
+aStringVector <- sample(someStrings, numElements, replace = TRUE)
+result <- microbenchmark(paste(aStringVector, collapse = " "), Reduce(paste, aStringVector))
+```
+
+```{r echo = FALSE, dependson="testReducePaste"}
+levels(result$expr) <- c('Reduce', 'paste')
+print(result, unit="relative")
+autoplot(result)
+```

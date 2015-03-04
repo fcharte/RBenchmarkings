@@ -250,3 +250,56 @@ result <- microbenchmark(v[which(v > t)] <- 0, fCpp(v, t))
 ![](figure/unnamed-chunk-7-1.png) 
 
 Although the improvement provided by the C++ function over `which` is not impressive, certainly we can save some time if we are comfortable writing C++ code.
+
+Reduce vs vectorized functions
+=====
+
+
+```r
+numElements <- 1e5
+v <- fgen()
+
+result <- microbenchmark(sum(v), Reduce('+', v))
+```
+
+
+```
+## Unit: relative
+##            expr      min       lq     mean  median       uq      max neval
+##          sum(v)   1.0000   1.0000   1.0000   1.000   1.0000   1.0000   100
+##  Reduce("+", v) 280.3035 282.3651 271.0383 255.496 249.5048 427.1206   100
+```
+
+![](figure/unnamed-chunk-8-1.png) 
+
+
+```r
+result <- microbenchmark(prod(v), Reduce('*', v))
+```
+
+
+```
+## Unit: relative
+##            expr      min       lq     mean   median      uq      max neval
+##         prod(v) 1.000000 1.000000 1.000000 1.000000 1.00000 1.000000   100
+##  Reduce("*", v) 2.646571 2.727265 2.870891 2.780134 2.78997 7.104513   100
+```
+
+![](figure/unnamed-chunk-9-1.png) 
+
+
+```r
+numElements <- 1e4
+aStringVector <- sample(someStrings, numElements, replace = TRUE)
+result <- microbenchmark(paste(aStringVector, collapse = " "), Reduce(paste, aStringVector))
+```
+
+
+```
+## Unit: relative
+##    expr      min       lq     mean   median      uq      max neval
+##  Reduce    1.000    1.000    1.000    1.000    1.00    1.000   100
+##   paste 4037.178 4017.092 4155.169 4202.428 4369.06 3992.414   100
+```
+
+![](figure/unnamed-chunk-10-1.png) 
