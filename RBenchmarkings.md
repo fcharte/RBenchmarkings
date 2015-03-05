@@ -253,6 +253,7 @@ Although the improvement provided by the C++ function over `which` is not impres
 
 Reduce vs vectorized functions
 =====
+The `Reduce` function is used to reduce the values stored into a vector by applying the same function to every item and the previous accumulated result. However, sometimes there are better ways to do the same. For instance, `Reduce` shouldn't be used to obtain the sum of a vector:
 
 
 ```r
@@ -272,6 +273,8 @@ result <- microbenchmark(sum(v), Reduce('+', v))
 
 ![](figure/unnamed-chunk-8-1.png) 
 
+Although the difference is remarkably smaller, `Reduce` is also slower than the `prod` function:
+
 
 ```r
 result <- microbenchmark(prod(v), Reduce('*', v))
@@ -286,6 +289,8 @@ result <- microbenchmark(prod(v), Reduce('*', v))
 ```
 
 ![](figure/unnamed-chunk-9-1.png) 
+
+Sometimes `Reduce` is used because we aren't aware that a certain function is already vectorized. This is the case of the `paste` function, which is able to join a vector of strings without any iteration:
 
 
 ```r
@@ -303,3 +308,7 @@ result <- microbenchmark(paste(aStringVector, collapse = " "), Reduce(paste, aSt
 ```
 
 ![](figure/unnamed-chunk-10-1.png) 
+
+Conclusion
+--------------
+In general, `Reduce` is a solution to apply an operation to a vector of values when no other alternatives are available. Functions already available in R to do the same task are always more efficient, as can be seen in the previous tests.
