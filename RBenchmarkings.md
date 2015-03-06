@@ -6,7 +6,16 @@ This document compares the performance in doing a task by means of different app
 
 The goal is to elucidate which is the best method to accomplish a certain task.
 
-Generating a data.frame containing character data with and without stringsAsFactors
+Index
+===
+* [Generating a data.frame containing character data with and without stringsAsFactors](#DataframeStrings)
+* [Growing list vs preallocated list vs lapply](#GrowingLists)
+* [`$` vs `[[` operator](#ListOperators)
+* [Comparison of two vector values](#CompareVectors)
+* [R source code vs R compiled code vs C++ code](#SourcevsCompiled)
+* [Reduce vs vectorized functions](#ReducevsVectorized)
+
+<a name="DataframeStrings"/> Generating a data.frame containing character data with and without stringsAsFactors
 =================
 
 With this code I want to test the difference between using `stringsAsFactors = TRUE` versus `stringsAsFactors = FALSE` while creating a new data.frame.
@@ -45,7 +54,7 @@ Conclusion
 ----------------
 Generating a `data.frame` containing character columns is quicker when `stringsAsFactors = FALSE` is used. Nonetheless, it may be taken into account that this option implies the use of more memory, as character strings are stored individually instead of as numeric values referencing the factor levels. For this same reason, further operations such as sorting by a character column can take more time (compared with sorting by a factor column).
 
-Growing list vs preallocated list vs lapply
+<a name="GrowingLists" />Growing list vs preallocated list vs lapply
 ===============
 With the code shown below I want to test the differences between creating a list growing it, preallocating the elements, and using the `lapply` function. 
 
@@ -81,7 +90,7 @@ There is no doubt that growing the list as items are added is a bad idea, since 
 
 The result should be the same while working with a vector or a data.frame, instead of a list.
 
-$ vs [[ operator
+<a name="ListOperators" />$ vs [[ operator
 ==============
 The `$` operator is constantly used in R code to access lists and data.frames elements by name. The operator `[` could be used to do the same task, using numeric indexes instead. Is there any performance difference between them?
 
@@ -110,7 +119,7 @@ Conclusion
 ------------
 Although the difference between the two operators is very tight, it should be taken into account if we use these operators inside a loop or any other repetitve structure. Multiply the small difference by the number of times the operator is used during the program execution to assess if the effort worth it. 
 
-Comparison of two vector values
+<a name="CompareVectors" />Comparison of two vector values
 ======
 
 Assume that you want to know which items in a vector `v` (values) have higher values than the corresponding items (by position) in another vector `t` (threshold). The goal is setting to 0 those values. This is a task that can be accomplished in several ways, for instance:
@@ -180,7 +189,7 @@ Conclusion
 --------------
 When it comes to apply some change to those items in a vector that satisfy a certain restriction, it seems that firstly obtaining the indexes, with the `which` function, and then making the change is the most efficient way of those compared here.
 
-R source code vs R compiled code vs C++ code
+<a name="SourcevsCompiled"/>R source code vs R compiled code vs C++ code
 ======
 
 Sometimes it is not easy to translate a loop into a vectorized expression or a call to `apply`. For instance, this happens when the operation to be made in a cycle depens on the result of a previous iteration. In these cases the loop R function containing the loop can be translated to bytecode, by means of the `cmpfun` function of the `compiler` package. Another alternative would be implementing that loop in C++ taking advantage of the `Rcpp` package. But, is it worth it?
@@ -251,7 +260,7 @@ result <- microbenchmark(v[which(v > t)] <- 0, fCpp(v, t))
 
 Although the improvement provided by the C++ function over `which` is not impressive, certainly we can save some time if we are comfortable writing C++ code.
 
-Reduce vs vectorized functions
+<a name="ReducevsVectorized"/>Reduce vs vectorized functions
 =====
 The `Reduce` function is used to reduce the values stored into a vector by applying the same function to every item and the previous accumulated result. However, sometimes there are better ways to do the same. For instance, `Reduce` shouldn't be used to obtain the sum of a vector:
 
