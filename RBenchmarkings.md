@@ -8,12 +8,12 @@ The goal is to elucidate which is the best method to accomplish a certain task.
 
 Index
 ===
-* [Generating a data.frame containing character data with and without stringsAsFactors](#DataframeStrings)
-* [Growing list vs preallocated list vs lapply](#GrowingLists)
+* [Generating a data.frame containing character data with and without `stringsAsFactors`](#DataframeStrings)
+* [Growing list vs preallocated list vs `lapply`](#GrowingLists)
 * [`$` vs `[[` operator](#ListOperators)
 * [Comparison of two vector values](#CompareVectors)
 * [R source code vs R compiled code vs C++ code](#SourcevsCompiled)
-* [Reduce vs vectorized functions](#ReducevsVectorized)
+* [`Reduce` vs vectorized functions](#ReducevsVectorized)
 
 <a name="DataframeStrings"/> Generating a data.frame containing character data with and without stringsAsFactors
 =================

@@ -9,16 +9,16 @@ output:
 
 This document compares the performance in doing a task by means of different approaches in R. For doing so, the `microbenchmark` package is used, measuring the time spent by each approach. The results are shown numerically and plotting them using `ggplot2`. The numeric table shows relative performances, with the best method as `1.0` and the others showing the number of times which they are worse than the former.
 
-The goal is to elucidate which is the best method to accomplish a certain task.
+The goal is to elucidate which is the best method (attending only to raw performance) to accomplish a certain task.
 
 Index
 ===
-* [Generating a data.frame containing character data with and without stringsAsFactors](#DataframeStrings)
-* [Growing list vs preallocated list vs lapply](#GrowingLists)
+* [Generating a data.frame containing character data with and without `stringsAsFactors`](#DataframeStrings)
+* [Growing list vs preallocated list vs `lapply`](#GrowingLists)
 * [`$` vs `[[` operator](#ListOperators)
 * [Comparison of two vector values](#CompareVectors)
 * [R source code vs R compiled code vs C++ code](#SourcevsCompiled)
-* [Reduce vs vectorized functions](#ReducevsVectorized)
+* [`Reduce` vs vectorized functions](#ReducevsVectorized)
 
 <a name="DataframeStrings"/> Generating a data.frame containing character data with and without stringsAsFactors
 =================
